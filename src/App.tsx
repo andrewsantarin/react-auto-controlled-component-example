@@ -1,26 +1,72 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import { AutoControlledComponent, AutoControlledManager } from '@andrewsantarin/auto-controlled';
 
-export default App;
+
+type AppProps = {
+  name?: string;
+  defaultActive?: boolean;
+  defaultLevel?: number;
+  active?: boolean;
+  level?: number;
+};
+
+type AppState = Required<
+  Pick<AppProps, 'active' | 'level'>
+>;
+
+const appAutoControlledManager = AutoControlledManager<AppState, AppProps>(
+  [
+    'active',
+    'level',
+  ],
+  {
+    getInitialAutoControlledState() {
+      return {
+        active: false,
+        level: 0,
+      };
+    }
+  }
+);
+
+export class App extends React.Component<AppProps, AppState> implements AutoControlledComponent<AppState> {
+  constructor(props: AppProps) {
+    super(props);
+
+    this.state = appAutoControlledManager.getInitialAutoControlledStateFromProps(props);
+  }
+
+  static getDerivedStateFromProps = appAutoControlledManager.getDerivedStateFromProps;
+  public trySetState = appAutoControlledManager.trySetState;
+
+  private handleClick = () => {
+    this.trySetState({
+      active: !this.state.active,
+      level: this.state.level + 1,
+    });
+  }
+
+  render() {
+    const {
+      active,
+      level,
+    } = this.state;
+
+    return (
+      <div>
+        <button onClick={this.handleClick}>
+          {level}
+        </button>
+        <div>  
+          <label>
+            <input type="checkbox" checked={active} />
+            {' '}
+            {active ? 'Active' : 'Inactive'}
+          </label>
+        </div>
+      </div>
+    );
+  }
+}
