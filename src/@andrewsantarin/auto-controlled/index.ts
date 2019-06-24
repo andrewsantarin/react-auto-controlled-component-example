@@ -4,6 +4,10 @@ import isFunction from 'lodash/isFunction';
 import isUndefined from 'lodash/isUndefined';
 
 
+// TODO:
+// Implement a similar solution for the `useState` hook. Let's call it `useTryState`.
+
+
 // NOTE:
 // The source code is mostly shamelessly cloned from '@stardust-ui/react'.
 // After attempting to build a library from Stardust UI React as a dependency, we figured out that it's impossible to use it.
